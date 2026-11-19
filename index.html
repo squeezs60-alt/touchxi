@@ -272,9 +272,30 @@ const STORE_KEY = 'touchline.v1';
 let db, ui = {view:'home', fxId:null, block:0, sel:null, sheet:null, styleTab:null};
 
 const PITCHES=['Grass','3G','4G','Astroturf','Indoor','Other'];
-// Squad and fixtures are not built in: load them with Team › Restore backup, or add them in the app.
-const REAL_PLAYERS=[];
-const REAL_FIXTURES=[];
+const REAL_PLAYERS=[[1,'Rowan',['GK']],[5,'Stanley',[]],[6,'Ollie',[]],[7,'Archie',[]],[8,'John',[]],[9,'Jacob',[]],[10,'Hugo',[]],[11,'Harry',[]],[12,'Will',[]],[14,'Freddy',[]],[17,'Seb',[]],[20,'Aiden',[]],[22,'Fin',[]]];
+// date, opponent, home/away, competition, our score, their score
+const REAL_FIXTURES=[
+ ['2026-09-12','Wheatley Wonderers','H','League',0,5],
+ ['2026-09-19','Ricall United','A','League',3,3],
+ ['2026-09-26','Ponte Cols Whites','H','League',6,2],
+ ['2026-10-03','Barnby Dunn Colts','A','League',2,0],
+ ['2026-10-10','Grimethorpe LLUK','H','League',2,2],
+ ['2026-10-17','Ponte Cols Sharks','A','League',1,4],
+ ['2026-10-31','Goole Town Tigers','A','Friendly',3,2],
+ ['2026-11-07','Hyde Park Knights','A','League',7,1],
+ ['2026-11-14','Ponte Cols Blue','H','League',5,2],
+ ['2026-11-21','Alerton Bywater','A','League'],
+ ['2026-12-12','Ricall United','H','League'],
+ ['2027-01-09','Ponte Cols Whites','A','League'],
+ ['2027-01-23','Barnby Dunn Colts','H','League'],
+ ['2027-01-30','Grimethorpe LLUK','A','League'],
+ ['2027-02-20','Ponte Cols Sharks','H','League'],
+ ['2027-02-27','Hyde Park Knights','H','League'],
+ ['2027-03-06','Ponte Cols Blue','A','League'],
+ ['2027-03-13','Alerton Bywater','H','League'],
+ ['2027-03-20','Wheatley Wonderers (TBC)','A','League'],
+ ['2027-03-27','Cup game (TBC)','H','Cup'],
+];
 function addRealData(t){
   t.name='Askern Miners U12 Red'; t.short='AM';
   const have=new Set(db.players.filter(p=>p.teamId===t.id).map(p=>p.name.toLowerCase()));
@@ -289,7 +310,7 @@ function addRealData(t){
 }
 function seed(){
   const teamId=uid();
-  db={version:1,realV1:true,activeTeamId:teamId,
+  db={version:1,realV1:true,realV2:true,activeTeamId:teamId,
     teams:[{id:teamId,name:'Askern Miners U12 Red',short:'AM',badge:null,colors:{primary:'#1B2A4E',secondary:'#FF2E93',text:'#FFFFFF'},format:9,periods:4,periodMins:15,windows:1,favs:['9:3-3-2','9:3-2-3']}],
     players:[],fixtures:[]};
   addRealData(db.teams[0]);
@@ -305,6 +326,7 @@ function load(){
       addRealData(t); }
     db.realV1=true;
   }
+  if(!db.realV2){ const t=db.teams.find(x=>/^askern miners/i.test(x.name)); if(t) addRealData(t); db.realV2=true; }
   try{ const u=JSON.parse(localStorage.getItem(STORE_KEY+'.ui')||'null'); if(u&&u.view!=='match') Object.assign(ui,{view:u.view,fxId:u.fxId}); }catch(e){}
 }
 function save(){
