@@ -272,7 +272,7 @@ const STORE_KEY = 'touchline.v1';
 let db, ui = {view:'home', fxId:null, block:0, sel:null, sheet:null, styleTab:null};
 
 const PITCHES=['Grass','3G','4G','Astroturf','Indoor','Other'];
-const REAL_PLAYERS=[[1,'Rowan',['GK']],[5,'Stanley',[]],[6,'Ollie',[]],[7,'Archie',[]],[8,'John',[]],[9,'Jacob',[]],[10,'Hugo',[]],[11,'Harry',[]],[12,'Will',[]],[14,'Freddy',[]],[17,'Seb',[]],[20,'Aiden',[]],[22,'Fin',[]]];
+const REAL_PLAYERS=[[1,'Rowan',['GK']],[5,'Stanley',['CM','ST']],[6,'Ollie',['CB']],[7,'Archie',['ST','LM','CM']],[8,'John',['CM','CDM','RM']],[9,'Jacob',[]],[10,'Hugo',[]],[11,'Harry',[]],[12,'Will',[]],[14,'Freddy',[]],[17,'Seb',[]],[20,'Aiden',[]],[22,'Fin',[]]];
 // date, opponent, home/away, competition, our score, their score
 const REAL_FIXTURES=[
  ['2026-09-12','Wheatley Wonderers','H','League',0,5],
@@ -326,6 +326,8 @@ function load(){
       addRealData(t); }
     db.realV1=true;
   }
+  // fill in known positions for players who have none set yet (never overwrites positions set in the app)
+  REAL_PLAYERS.forEach(([n,name,pos])=>{ if(!pos.length) return; db.players.filter(x=>x.name.toLowerCase()===name.toLowerCase()&&!x.pos.length).forEach(x=>x.pos=[...pos]); });
   if(!db.realV2){ const t=db.teams.find(x=>/^askern miners/i.test(x.name)); if(t) addRealData(t); db.realV2=true; }
   try{ const u=JSON.parse(localStorage.getItem(STORE_KEY+'.ui')||'null'); if(u&&u.view!=='match') Object.assign(ui,{view:u.view,fxId:u.fxId}); }catch(e){}
 }
